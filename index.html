@@ -65,6 +65,15 @@
       // Fallback image when running locally or if manifest fails
       var FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80';
 
+      // Get canonical origin (injected by Worker when proxied, otherwise use current origin)
+      function getCanonicalOrigin() {
+        var meta = document.querySelector('meta[name="canonical-origin"]');
+        if (meta && meta.content) {
+          return meta.content;
+        }
+        return window.location.origin;
+      }
+
       // Determine season based on Luxembourg time (CET/CEST)
       function getSeason() {
         var now = new Date();
@@ -95,8 +104,10 @@
           return;
         }
 
-        // Running on a server - fetch the manifest
-        fetch('manifest.json')
+        var baseUrl = getCanonicalOrigin();
+        var manifestUrl = baseUrl + '/manifest.json';
+
+        fetch(manifestUrl)
           .then(function(response) {
             if (!response.ok) throw new Error('Manifest not found');
             return response.json();
@@ -105,7 +116,7 @@
             var season = getSeason();
             var images = manifest[season];
             if (images && images.length > 0) {
-              var randomImage = images[Math.floor(Math.random() * images.length)];
+              var randomImage = baseUrl + '/' + images[Math.floor(Math.random() * images.length)];
               setBackground(randomImage);
             } else {
               console.warn('No images for season:', season);
