@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Maintenance</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    body { 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a2e no-repeat center center fixed; 
+      background-size: cover;
+      font: 20px Helvetica, sans-serif;
+      color: #333;
+    }
+
+    .content {
+      background-color: rgba(255, 255, 255, 0.85); 
+      padding: 50px 100px 60px 100px;
+      border-radius: 15px;
+      text-align: left;
+      max-width: 75%;
+    }
+
+    h1 { 
+      font-size: 40pt;
+      margin-top: 10px;
+    }
+
+    a { color: #000; }
+    a:hover { color: #333; text-decoration: none; }
+
+    @media (max-width: 768px) {
+      .content { 
+        padding: 20px 30px 30px 30px;
+        max-width: 90%;
+      }
+      h1 { font-size: 24pt; }
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <h1>We'll be right back!</h1>
+    <p>We're very sorry for the inconvenience but we're performing maintenance.</p>
+    <p>Please check back soon... or contact us directly in case of urgency.</p>
+    <p>— <strong>V. & N.</strong></p>
+  </div>
+
+  <script>
+    (function() {
+      // Fallback image when running locally or if manifest fails
+      var FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80';
+
+      // Determine season based on Luxembourg time (CET/CEST)
+      function getSeason() {
+        var now = new Date();
+        var luxFormatter = new Intl.DateTimeFormat('en-GB', {
+          timeZone: 'Europe/Luxembourg',
+          month: 'numeric',
+          day: 'numeric'
+        });
+        var parts = luxFormatter.formatToParts(now);
+        var month = parseInt(parts.find(function(p) { return p.type === 'month'; }).value, 10);
+
+        // Meteorological seasons
+        if (month === 12 || month === 1 || month === 2) return 'winter';
+        if (month >= 3 && month <= 5) return 'spring';
+        if (month >= 6 && month <= 8) return 'summer';
+        return 'autumn';
+      }
+
+      function setBackground(imageUrl) {
+        document.body.style.backgroundImage = "url('" + imageUrl + "')";
+      }
+
+      function loadSeasonalBackground() {
+        // Detect if running locally (file:// protocol)
+        if (window.location.protocol === 'file:') {
+          console.info('Running locally - using fallback image. For full testing, use a local server.');
+          setBackground(FALLBACK_IMAGE);
+          return;
+        }
+
+        // Running on a server - fetch the manifest
+        fetch('manifest.json')
+          .then(function(response) {
+            if (!response.ok) throw new Error('Manifest not found');
+            return response.json();
+          })
+          .then(function(manifest) {
+            var season = getSeason();
+            var images = manifest[season];
+            if (images && images.length > 0) {
+              var randomImage = images[Math.floor(Math.random() * images.length)];
+              setBackground(randomImage);
+            } else {
+              console.warn('No images for season:', season);
+              setBackground(FALLBACK_IMAGE);
+            }
+          })
+          .catch(function(err) {
+            console.warn('Could not load seasonal background:', err);
+            setBackground(FALLBACK_IMAGE);
+          });
+      }
+
+      loadSeasonalBackground();
+    })();
+  </script>
+</body>
+</html>

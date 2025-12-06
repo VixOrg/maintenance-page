@@ -1,0 +1,30 @@
+{
+  "winter": [
+    "winter/pic1.webp",
+    "winter/pic3.webp",
+    "winter/pic4.webp",
+    "winter/pic5.webp"
+  ],
+  "spring": [
+    "spring/pic1.webp",
+    "spring/pic2.webp",
+    "spring/pic3.webp",
+    "spring/pic4.webp",
+    "spring/pic5.webp",
+    "spring/pic6.webp"
+  ],
+  "summer": [
+    "summer/pic1.webp",
+    "summer/pic2.webp",
+    "summer/pic3.webp",
+    "summer/pic4.webp",
+    "summer/pic5.webp"
+  ],
+  "autumn": [
+    "autumn/pic1.webp",
+    "autumn/pic2.webp",
+    "autumn/pic3.webp",
+    "autumn/pic4.webp",
+    "autumn/pic5.webp"
+  ]
+}
